@@ -1,6 +1,5 @@
 package web.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import web.model.User;
@@ -50,8 +49,12 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void deleteUser(int id) {
         User user = entityManager.find(User.class, id);
-        if (null != user) {
-            entityManager.remove(user);
-        }
+        entityManager.remove(user);
     }
+
+    /*
+    for association for create и update
+
+    @Override
+    public void saveUser() { } */
 }

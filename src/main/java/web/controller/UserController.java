@@ -1,6 +1,5 @@
 package web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -15,7 +14,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -29,15 +27,31 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String getOneUser(@PathVariable("id") int id, ModelMap model) {
-        //показывает одного человека из бд
-        model.addAttribute("user", userService.getOneUser(id));
+        //показывает данные одного человека из бд по ID
+        try {
+            model.addAttribute("user", userService.getOneUser(id));
+        } catch (Exception ex) {
+            ex.printStackTrace();;
+        }
         return "users/get_one_user";
     }
 
     @GetMapping("users/new")
     public String newUser (Model model) {
+        //возвращает html-страницу для добавления нового пользователя
         model.addAttribute("user", new User());
         return "users/new";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String edit(Model model, @PathVariable("id") int id) {
+        //возвращает html-страницу для редактирования человека
+        try {
+            model.addAttribute("user", userService.getOneUser(id));
+        } catch (Exception ex) {
+            ex.printStackTrace();;
+        }
+        return "users/edit";
     }
 
     @PostMapping()
@@ -50,12 +64,6 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-    //возвращает html-стрраницу для редактирования человека
-        model.addAttribute("user", userService.getOneUser(id));
-        return "users/edit";
-    }
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id, BindingResult bindingResult) {

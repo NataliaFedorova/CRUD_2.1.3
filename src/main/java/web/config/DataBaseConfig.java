@@ -1,8 +1,6 @@
 package web.config;
 
-
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +14,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -37,23 +32,16 @@ public class DataBaseConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean () {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-            em.setDataSource(dataSource());
-            em.setPackagesToScan(environment.getRequiredProperty("app.entity.package"));
-            em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-            em.setJpaProperties(additionalProperties()/*getHibernateProperties()*/);
-            return em;
-
-    }
-
-    @Bean
     public DataSource dataSource() {
         BasicDataSource ds = new BasicDataSource();
-        ds.setUrl(environment.getRequiredProperty("app.url"));
-        ds.setDriverClassName(Objects.requireNonNull(environment.getRequiredProperty("app.driver")));
-        ds.setUsername(environment.getRequiredProperty("app.username"));
-        ds.setPassword(environment.getRequiredProperty("app.password"));
+        try {
+            ds.setUrl(environment.getRequiredProperty("app.url"));
+            ds.setDriverClassName(Objects.requireNonNull(environment.getRequiredProperty("app.driver")));
+            ds.setUsername(environment.getRequiredProperty("app.username"));
+            ds.setPassword(environment.getRequiredProperty("app.password"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return ds;
     }
 
@@ -62,6 +50,11 @@ public class DataBaseConfig {
         JpaTransactionManager manager = new JpaTransactionManager();
         manager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
         return manager;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+       return new HibernateJpaVendorAdapter();
     }
 
     @Bean
@@ -77,6 +70,16 @@ public class DataBaseConfig {
         return properties;
     }
 
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean () {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan(environment.getRequiredProperty("app.entity.package"));
+        em.setJpaVendorAdapter(jpaVendorAdapter());
+        em.setJpaProperties(additionalProperties()/*getHibernateProperties()*/);
+        return em;
+    }
+
     /*
     private Properties getHibernateProperties() {
         try {
@@ -88,6 +91,5 @@ public class DataBaseConfig {
             throw new IllegalArgumentException("Can't find 'hibernate.properties' in classpath!", ex);
         }
     }
-
      */
 }

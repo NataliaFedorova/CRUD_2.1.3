@@ -10,8 +10,11 @@ import java.util.List;
 @Component
 public class UserServiceImpl implements UserService{
 
-    @Autowired
     private UserDao userDao;
+
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public List<User> getAllUsers() {
         return userDao.getAllUsers();
