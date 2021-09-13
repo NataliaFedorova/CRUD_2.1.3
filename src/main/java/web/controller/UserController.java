@@ -22,60 +22,61 @@ public class UserController {
     public String getAllUsers(ModelMap model) {
         // показывает данные всех людей из бд
         model.addAttribute("users",userService.getAllUsers());
-        return "users/get_all_users";
+        return "get_all_users";
     }
 
     @GetMapping("/{id}")
-    public String getOneUser(@PathVariable("id") int id, ModelMap model) {
+    public String getOneUser(@PathVariable("id") Long id, ModelMap model) {
         //показывает данные одного человека из бд по ID
         try {
             model.addAttribute("user", userService.getOneUser(id));
         } catch (Exception ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
-        return "users/get_one_user";
+        return "get_one_user";
     }
 
-    @GetMapping("users/new")
-    public String newUser (Model model) {
+    @GetMapping("/new")
+    public String createUserForm (Model model) {
         //возвращает html-страницу для добавления нового пользователя
         model.addAttribute("user", new User());
-        return "users/new";
+        return "new";
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
+    public String editUserForm (Model model, @PathVariable("id") Long id) {
         //возвращает html-страницу для редактирования человека
         try {
             model.addAttribute("user", userService.getOneUser(id));
         } catch (Exception ex) {
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
-        return "users/edit";
+        return "edit";
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("user") User user, BindingResult bindingResult) {
-        // Добавляем пользователя в бд
+    public String createUser(@ModelAttribute("user") User user, BindingResult bindingResult) {
+        // добавляет пользователя в бд
         if (bindingResult.hasErrors()) {
-            return "users/new";
+            return "new";
         }
         userService.addUser(user);
         return "redirect:/users";
     }
 
-
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id, BindingResult bindingResult) {
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id, BindingResult bindingResult) {
+        // обновляет данные пользователя в бд
         if (bindingResult.hasErrors()) {
-            return "users/edit";
+            return "edit";
         }
         userService.updateUser(id, user);
         return "redirect:/users";
     }
 
-    @DeleteMapping("{id}")
-    public String deleteUser(@PathVariable("id") int id) {
+    @DeleteMapping("/{id}")
+    public String deleteUser (@PathVariable("id") Long id) {
+        // удаляет пользователя
         try {
             userService.deleteUser(id);
         } catch (Exception ex) {

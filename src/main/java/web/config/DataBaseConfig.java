@@ -15,6 +15,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -27,7 +29,7 @@ public class DataBaseConfig {
 
     private Environment environment;
 
-   public DataBaseConfig(Environment environment) {
+    public DataBaseConfig(Environment environment) {
        this.environment = environment;
     }
 
@@ -48,13 +50,13 @@ public class DataBaseConfig {
     @Bean
     public PlatformTransactionManager platformTransactionManager() {
         JpaTransactionManager manager = new JpaTransactionManager();
-        manager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+        manager.setEntityManagerFactory(entityManagerFactory().getObject());
         return manager;
     }
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
-       return new HibernateJpaVendorAdapter();
+        return new HibernateJpaVendorAdapter();
     }
 
     @Bean
@@ -62,25 +64,16 @@ public class DataBaseConfig {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    Properties additionalProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect.MySQLDialect", environment.getProperty("hibernate.dialect.MySQLDialect"));
-        properties.setProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
-        properties.setProperty("hibernate.hbm2ddl.import_files", environment.getProperty("hibernate.hbm2ddl.import_files"));
-        return properties;
-    }
-
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean () {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory () {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
         em.setPackagesToScan(environment.getRequiredProperty("app.entity.package"));
         em.setJpaVendorAdapter(jpaVendorAdapter());
-        em.setJpaProperties(additionalProperties()/*getHibernateProperties()*/);
+        em.setJpaProperties(getHibernateProperties())/*additionalProperties()*/;
         return em;
     }
 
-    /*
     private Properties getHibernateProperties() {
         try {
             Properties properties = new Properties();
@@ -91,5 +84,4 @@ public class DataBaseConfig {
             throw new IllegalArgumentException("Can't find 'hibernate.properties' in classpath!", ex);
         }
     }
-     */
 }

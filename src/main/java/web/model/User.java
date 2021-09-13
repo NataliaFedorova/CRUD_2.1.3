@@ -13,14 +13,14 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "firstName")
+    @Column(name = "name")
     @NotBlank
     @Size(max = 100)
-    private String firstName;
+    private String name;
 
-    @Column(name = "lastName")
+    @Column(name = "surname")
     @Size(max = 100)
-    private String lastName;
+    private String surname;
 
     @Column(name = "email")
     @Size(max = 100)
@@ -32,9 +32,9 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, int age) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String name, String surname, String email, int age) {
+        this.name = name;
+        this.surname = surname;
         this.email = email;
         this.age = age;
     }
@@ -47,20 +47,20 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getEmail() {
@@ -83,8 +83,8 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", firstName='" + name + '\'' +
+                ", lastName='" + surname + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 '}';
@@ -95,11 +95,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && id.equals(user.id) && firstName.equals(user.firstName) && lastName.equals(user.lastName) && email.equals(user.email);
+        return age == user.age && id.equals(user.id) && name.equals(user.name) && surname.equals(user.surname) && email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, age);
+        return Objects.hash(id, name, surname, email, age);
     }
 }
