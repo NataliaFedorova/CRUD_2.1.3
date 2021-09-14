@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import web.model.User;
 import web.service.UserService;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -28,11 +30,7 @@ public class UserController {
     @GetMapping("/{id}")
     public String getOneUser(@PathVariable("id") Long id, ModelMap model) {
         //показывает данные одного человека из бд по ID
-        try {
-            model.addAttribute("user", userService.getOneUser(id));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        model.addAttribute("user", userService.getOneUser(id));
         return "get_one_user";
     }
 
@@ -46,16 +44,12 @@ public class UserController {
     @GetMapping("/{id}/edit")
     public String editUserForm (Model model, @PathVariable("id") Long id) {
         //возвращает html-страницу для редактирования человека
-        try {
-            model.addAttribute("user", userService.getOneUser(id));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        model.addAttribute("user", userService.getOneUser(id));
         return "edit";
     }
 
     @PostMapping()
-    public String createUser(@ModelAttribute("user") User user, BindingResult bindingResult) {
+    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         // добавляет пользователя в бд
         if (bindingResult.hasErrors()) {
             return "new";
@@ -65,7 +59,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") Long id, BindingResult bindingResult) {
+    public String updateUser(@ModelAttribute("user") @Valid User user, @PathVariable("id") Long id, BindingResult bindingResult) {
         // обновляет данные пользователя в бд
         if (bindingResult.hasErrors()) {
             return "edit";
@@ -77,11 +71,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String deleteUser (@PathVariable("id") Long id) {
         // удаляет пользователя
-        try {
-            userService.deleteUser(id);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        userService.deleteUser(id);
         return "redirect:/users";
     }
 }

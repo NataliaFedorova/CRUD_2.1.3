@@ -1,12 +1,13 @@
 package web.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDao;
 import web.model.User;
 
 import java.util.List;
 
-@Component
+@Service
 public class UserServiceImpl implements UserService{
 
     private UserDao userDao;
@@ -23,12 +24,17 @@ public class UserServiceImpl implements UserService{
         return userDao.getOneUser(id);
     }
 
+    @Transactional
     public void addUser(User user) {
         userDao.addUser(user);
     }
+
+    @Transactional
     public void updateUser(Long id, User user) {
         userDao.updateUser(id, user);
     }
+
+    @Transactional
     public void deleteUser(Long id) {
         userDao.deleteUser(id);
     }
